@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #plogin {
+            width: 200px;
+            line-height: 100px;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            border: 1px solid lightgray;
+            border-radius: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="plogin">
+        {{msg}}
+    </div>
+
+    <script>
+        init();
+        async function init(){
+            await setTimeout(() => {
+                window.location.href="/login"
+            }, 1000);
+        }
+    </script>
+</body>
+
+</html>

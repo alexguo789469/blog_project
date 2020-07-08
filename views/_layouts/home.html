@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{block 'title'}}默认标题{{/block}}</title>
+
+  <!-- <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.css"> -->
+  <link rel="stylesheet" href="/node_modules/normalize.css/normalize.css">
+  <style>
+    *{
+      padding: 0;
+      margin: 0;
+      box-sizing: border-box;
+      font-family: "Helvetica Neue", Helvetica, sans-serif;
+      text-decoration: none;
+    }
+
+    #plogin {
+      width: 200px;
+      line-height: 100px;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      background-color: white;
+      border: 1px solid lightgray;
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    .navbar-header {
+      height: 13.889vw;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .navbar-header .left,
+    .navbar-header .right {
+      display: flex;
+      align-items: center;
+    }
+
+    .navbar-header .left img {
+      height: 7.222vw;
+      margin-left: 2.778vw;
+    }
+
+    .navbar-header .left input {
+      width: 90px;
+      padding: 0 2.778vw;
+      border-radius: 50px;
+      background-color: #f1f1f1;
+      font-size: 12px;
+      border: none;
+      line-height: 30px;
+      margin-left: 10px;
+    }
+
+    .navbar-header .right .post,
+    .navbar-header .right .login,
+    .navbar-header .right .register {
+      color: #4dcc4d;
+      background-color: white;
+      padding: 5px;
+    }
+
+    .navbar-header .right img {
+      height: 8.125vw;
+      width: 8.125vw;
+      margin: 2.415vw;
+    }
+  </style>
+  {{block 'head'}}{{/block}}
+</head>
+
+<body>
+
+  {{if plogin}}
+  <div id="plogin">
+    请先登录
+  </div>
+  {{/if}}
+
+  <div class="navbar-header">
+    <div class="left">
+      <a href="/">
+        <img src="../../public/img/douban.png" alt="">
+      </a>
+      <input type="text" placeholder="搜索">
+    </div>
+    <div class="right">
+      {{ if user }}
+      <a class="post" href="/topics/new">发起</a>
+      <a href="/profile?id={{ user._id }}"><img src="{{user.avatar}}" alt=""></a>
+      {{ else }}
+      <a class="login" href="/login">登录</a>
+      <a class="register" href="/register">注册</a>
+      {{ /if }}
+    </div>
+  </div>
+  {{block 'body'}}{{/block}}
+  <script src="/node_modules/jquery/dist/jquery.js"></script>
+  <script src="/node_modules/bootstrap/dist/js/bootstrap.js"></script>
+
+  <script>
+    function time() {
+
+      var timeList = document.getElementsByClassName("time");
+      for (var i = 0; i < timeList.length; i++) {
+        var oldDate = new Date(timeList[i].innerHTML);
+      
+        var newDate = new Date(Date.now());
+  
+        var diff = {
+          year: newDate.getFullYear() - oldDate.getFullYear(),
+          month: newDate.getMonth() - oldDate.getMonth(),
+          day: newDate.getDate() - oldDate.getDate(),
+          hour: newDate.getHours() - oldDate.getHours(),
+          minute: newDate.getMinutes() - oldDate.getMinutes(),
+          second: newDate.getSeconds() - oldDate.getSeconds()
+        }
+
+        for (item in diff) {
+  
+          if (diff[item] >= 1) {
+            if (diff[item] == 1) {
+              timeList[i].innerText = `${diff[item]} ${item}`;
+            } else {
+              timeList[i].innerText = `${diff[item]} ${item}s`;
+            }
+            break;
+          }
+        }
+      }
+    }
+
+    function $post(url, data, success, fail){
+      var xhr = new XMLHttpRequest();
+      xhr.open("post", url, true);
+      xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+      xhr.send(data);
+
+      xhr.onreadystatechange = function(){
+        if(xhr.readyState == 4){
+          if(xhr.status == 200){
+            success(xhr.responseText);
+          }else{
+            fail(xhr.status);
+          }
+        }
+      }
+    }
+
+  </script>
+  {{block 'script'}}{{/block}}
+</body>
+
+</html>

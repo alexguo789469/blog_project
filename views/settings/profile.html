@@ -1,0 +1,107 @@
+{{extend '../_layouts/home.html'}}
+
+{{block 'title'}}{{'多人博客 - 首页'}}{{/block}}
+
+{{block 'body'}}
+<section class="container">
+  {{if user}}
+  {{include '../_partials/settings-nav.html'}}
+  <div class="col-md-5">
+    <form method="post" action="/profile">
+      <input type="hidden" name="id" value="{{user._id}}">
+      <div class="form-group">
+        <label for="">账号</label>
+        <p class="form-control-static">{{user.email}}</p>
+      </div>
+      <div class="form-group">
+        <p>{{nick}}</p>
+        <label for="nickname">昵称</label>
+        <input type="text" class="form-control" name="nickname" value="{{user.nickname}}">
+      </div>
+      <div class="form-group">
+        <label for="bio">介绍</label>
+        <textarea class="form-control" rows="3" name="bio">{{user.bio}}</textarea>
+      </div>
+      <div class="form-group">
+        <label for="gender">性别</label>
+        <div>
+          {{if user.gender == -1}}
+          <input type="radio" name="gender" value="0"> 男
+          <input type="radio" name="gender" value="1"> 女
+          <input type="radio" name="gender" value="-1" checked> 保密
+          {{else if user.gender == 0}}
+          <input type="radio" name="gender" value="0" checked> 男
+          <input type="radio" name="gender" value="1"> 女
+          <input type="radio" name="gender" value="-1"> 保密
+          {{else}}
+          <input type="radio" name="gender" value="0"> 男
+          <input type="radio" name="gender" value="1" checked> 女
+          <input type="radio" name="gender" value="-1"> 保密
+          {{/if}}
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="birthday">生日</label>
+        <input type="password" class="form-control" name="birthday" value="{{user.birthday}}">
+      </div>
+      <button type="submit" class="btn btn-success">保存</button>
+    </form>
+  </div>
+  <div class="col-md-2 profile-avatar">
+    <dl>
+      <dt>头像设置</dt>
+      <dd>
+        <img class="avatar" width="150" height="150" src="{{user.avatar}}" alt="">
+        <div>
+          <input type="file" name="" id="file">
+          <button class="btn btn-default" id="btn" href="">Upload new picture</button>
+        </div>
+      </dd>
+    </dl>
+  </div>
+  {{/if}}
+</section>
+{{/block}}
+
+{{block 'script'}}
+<script>
+  var file = document.getElementById("file");
+  var avatar = document.getElementsByClassName("avatar")[0];
+
+  var oBtn = document.getElementById("btn");
+  console.log(oBtn);
+  
+  file.onchange = function(){
+    console.log(file.value);
+  }   
+  
+  oBtn.onclick = function(){
+    var formdata = new FormData();
+    formdata.append("file", file.files[0]);
+    $('/upload', formdata, (data)=>{
+        data = JSON.parse(data);
+        avatar.src = `http://localhost:3000${data.src}`;
+        console.log(avatar.src);
+    }, err => {
+        console.log(err);
+    })
+  }
+
+
+  function $(url, data, success, fail){
+    var xhr = new XMLHttpRequest();
+    xhr.open("post", url, true);
+    xhr.send(data);
+    xhr.onreadystatechange = function(){
+      if(xhr.readyState == 4){
+        if(xhr.status == 200){
+          success(xhr.responseText);
+        }
+        else{
+          fail(xhr.status);
+        }
+      }
+    }
+  }
+</script>
+{{/block}}

@@ -1,0 +1,347 @@
+{{extend '../_layouts/home.html'}}
+
+{{block 'title'}}{{'多人博客 - 首页'}}{{/block}}
+
+{{block 'head'}}
+<link rel="stylesheet" href="/public/css/markdown-github.css">
+<style>
+  .panel .panel-heading .action i {
+    margin-right: 10px;
+  }
+
+  #plogin {
+    width: 200px;
+    line-height: 100px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    border: 1px solid lightgray;
+    border-radius: 10px;
+    text-align: center;
+  }
+
+  #plogin #confirm,
+  #plogin #cancel {
+    line-height: 30px;
+  }
+
+  .container {
+    padding: 0 16px;
+  }
+
+  .container .markdown .title {
+    font-size: 24px;
+    font-weight: bold;
+    padding: 30px 0 15px;
+  }
+
+  .container .markdown .authorinfo {
+    display: flex;
+    align-items: center;
+  }
+
+  .container .markdown .authorinfo img {
+    width: 20px;
+    height: 20px;
+    padding-right: 5px;
+  }
+
+  .container .markdown .authorinfo span {
+    font-size: 12px;
+    color: #c0c0c0;
+    padding-right: 5px;
+  }
+
+  .container .markdown .authorinfo .name {
+    color: #818181;
+  }
+
+  .container .markdown .content {
+    color: #191919;
+    font-size: 18px;
+    padding-top: 35px;
+  }
+
+  .commentContainer {
+    padding-top: 15px;
+  }
+
+  .commentContainer .commentTitle {
+    font-size: 17px;
+    color: #818181;
+    padding: 10px 0;
+  }
+
+  .commentContainer .eachComment {
+    padding: 10px 0;
+
+  }
+
+  .commentContainer .eachComment .commentinfo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #aaaaaa;
+    font-size: 13px;
+  }
+
+  .commentContainer .eachComment .commentinfo .left,
+  .commentContainer .eachComment .commentinfo .right {
+    display: flex;
+    align-items: center;
+  }
+
+  .commentContainer .eachComment .commentinfo span {
+    padding-left: 10px;
+  }
+
+  .commentContainer .eachComment .commentinfo .left img {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+  }
+
+  .commentContainer .eachComment .content {
+    font-size: 15px;
+    color: #494949;
+    padding: 10px 30px 0;
+  }
+
+  .commentContainer .eachComment .content .front {
+    color: #49c05d;
+  }
+
+  .form-group {
+    display: flex;
+    margin-top: 10px;
+    position: fixed;
+    bottom: 0px;
+    background-color: #fff;
+    width: 100%;
+  }
+
+  .form-group .txt {
+    color: #aaaaaa;
+    background-color: #f7f7f7;
+    height: 40px;
+    font-size: 15px;
+    border: none;
+    border-radius: 20px;
+    text-align: center;
+    flex-grow: 1;
+  }
+
+  .form-group .txt:focus {
+    color: black;
+    border: 1px solid black;
+  }
+
+  .form-group .btn {
+    height: 40px;
+    border: none;
+    padding: 0 20px;
+    margin-left: 10px;
+    margin-right: 26px;
+  }
+
+  input:focus {
+    outline: none;
+  }
+
+  .info {
+    margin-bottom: 40px;
+  }
+
+  .icon {
+    margin: 10px 0;
+  }
+</style>
+{{/block}}
+
+
+{{block 'body'}}
+
+{{if topic}}
+<section class="container">
+  <div class="info">
+    <article class="markdown">
+      <span id="topicId" style="display: none;">{{topic._id}}</span>
+      <p class="title">{{topic.title}}</p>
+      <div class="authorinfo">
+        <img src="{{author.avatar}}" alt="">
+        <span class="name">{{author.nickname}}</span>
+        <span class="time">{{author.createdTime}}</span>
+      </div>
+      <p class="content">{{topic.content}}</p>
+    </article>
+
+    <div class="commentContainer">
+      <div class="commentTitle">热门回复</div>
+      {{each topic.comments}}
+      <div class="eachComment">
+        <div class="commentinfo">
+          <div class="left">
+            <img src="{{$value.author.avatar}}" alt="">
+            <span>{{$value.author.nickname}} commented</span>
+            <span class="time">{{$value.createdTime}}</span>
+          </div>
+
+          <div class="right">
+            <span class="like">{{$value.likes}}人赞</span>
+            <span class="commentid" style="display: none">{{$value._id}}</span>
+            <span id="{{$value._id}}" class="reply">回复</span>
+          </div>
+
+        </div>
+        {{if $value.parent}}
+        <div class="content parentcontent">
+          <span class="front">| </span>
+          {{$value.parent.content}}
+          <span class="author">
+            {{$value.parent.author.nickname}}
+          </span>
+        </div>
+        {{/if}}
+        <div class="content">
+          {{$value.content}}
+        </div>
+      </div>
+      {{/each}}
+    </div>
+    <hr>
+    <div class="icon">
+      <span class="topiclike">{{topic.likes}}人赞</span>
+      <span class="collection">收藏</span>
+    </div>
+  </div>
+  <form action="/topics" method="post">
+    <div class="form-group">
+      <input type="hidden" name="id" value="{{topic._id}}">
+      <input class="txt" name="content" placeholder="添加回复"></input>
+      {{if msg}}
+      <p>{{msg}}</p>
+      {{/if}}
+
+      <button type="submit" class="btn">回复</button>
+    </div>
+  </form>
+
+</section>
+{{/if}}
+
+{{/block}}
+
+{{block 'script'}}
+<script>
+  time();
+  let oTopicid = document.getElementById("topicId").innerHTML;
+  let aLike = document.getElementsByClassName("like");
+  let aCommentid = document.getElementsByClassName("commentid");
+
+
+
+  let oReply = document.querySelector(".topiclike");
+  oReply.times = false
+  oReply.onclick = function () {
+    let data = `id=${oTopicid}`;
+    if (oReply.times) {
+      return
+    }
+    $post("/topiclike", data, (json) => {
+      json = JSON.parse(json);
+      if (json.err_code == 2) {
+        var num = parseInt(oReply.innerHTML)
+        oReply.innerHTML = `已赞(${num})`
+        oReply.times = true
+      } else if (json.err_code == 401) {
+        setTimeout(() => {
+          window.location.href = "/login";
+        }, 1000);
+      } else {
+        oReply.innerHTML = `${json.likes}人赞`
+      }
+    }, err => console.log(err))
+  }
+
+
+
+
+
+  for (let i = 0; i < aLike.length; i++) {
+    var oCommentid = aCommentid[i].innerHTML;
+
+    let data = `commentId=${oCommentid}&topicId=${oTopicid}`
+    aLike[i].times = false
+    aLike[i].onclick = function () {
+      if (aLike[i].times) {
+        return
+      }
+      $post("/like", data, function (json) {
+
+        json = JSON.parse(json);
+        if (json.err_code == 2) {
+
+          var str = aLike[i].innerHTML;
+          aLike[i].innerHTML = `已赞(${parseInt(str)})`
+          aLike[i].times = true;
+        } else if (json.err_code == 401) {
+          setTimeout(() => {
+            window.location.href = "/login";
+          }, 1000);
+        } else {
+          aLike[i].innerHTML = `已赞(${json.likes})`;
+          aLike[i].times = true;
+        }
+
+      }, function (err) {
+        console.log(err);
+      })
+
+    }
+  }
+
+  let oCReply = document.querySelectorAll(".reply");
+  let input = document.querySelectorAll("input");
+  let oBtn = document.querySelector(".btn");
+
+
+  for (let i = 0; i < oCReply.length; i++) {
+    oCReply[i].onclick = function () {
+      commentid = this.id;
+      topicid = input[1].value;
+
+      input[2].focus();
+      oBtn.type = "button";
+      console.log(oBtn);
+
+      oBtn.onclick = function () {
+
+        if (input[2].value.trim() == "") {
+          alert("评论不能为空")
+          return;
+        }
+        let data = `topicid=${topicid}&parentid=${commentid}&content=${input[2].value}`
+        $post("/comments", data, function (json) {
+          json = JSON.parse(json);
+          if (json.err_code == 401) {
+            setTimeout(() => {
+              window.location.href = "/login";
+            }, 1000);
+          } else {
+            location.href = `/topics/?id=${topicid}`
+          }
+        }, function (err) {
+          console.log(err);
+        })
+
+
+      }
+    }
+  }
+
+
+
+</script>
+{{/block}}

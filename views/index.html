@@ -1,0 +1,66 @@
+{{extend './_layouts/home.html'}}
+
+{{block 'title'}}{{'多人博客 - 首页'}}{{/block}}
+
+{{block 'head'}}
+<style>
+  a{
+    text-decoration: none;
+  }
+  ul{
+    margin: 0;
+    padding: 0;
+  }
+  li {
+    list-style: none;
+  }
+
+  .topicpattern .topicDetail {
+    background-color: #fff;
+    padding: 3.333vw;
+  }
+
+  .topicpattern .topicDetail .title {
+    font-size: 4.063vw;
+    color: #191919;
+  }
+
+  .topicpattern .topicDetail .info {
+    color: #818181;
+    font-size: 2.5vw;
+    padding-top: 5px;
+  }
+
+  .topicpattern .topicDetail .info .reply, .topicpattern .topicDetail .info .time{
+    font-size: 2.5vw;
+  }
+</style>
+{{/block}}
+
+
+{{block 'body'}}
+<section>
+  <ul>
+    {{each topics}}
+    <li class="topicpattern">
+      <a href="/topics/?id={{$value._id}}">
+        <div class="topicDetail">
+          <div class="title">{{$value.title}}</div>
+          <div class="info">
+            <span class="reply">{{$value.comments.length}}回复 最后回复时间 </span>
+    
+            {{if $value.comments.length==0}}
+            <span class="time">{{$value.createdTime}}</span>
+
+            {{ else }}
+            <span class="time">{{$value.comments[0].createdTime}}</span>
+            {{/if}}
+            ago
+          </div>
+        </div>
+      </a>
+    </li>
+    {{/each}}
+  </ul>
+</section>
+{{/block}}
